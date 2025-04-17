@@ -1,10 +1,9 @@
 import streamlit as st
 from textblob import TextBlob
 import pandas as pd
-import fitz  # PyMuPDF
+import pdfplumber  # Use pdfplumber for PDF extraction
 from fpdf import FPDF
 import io
-import fitz
 
 # Attempt to download TextBlob corpora
 try:
@@ -22,9 +21,9 @@ st.write("Upload a resume PDF or paste text below to analyze its strengths and w
 
 def extract_text_from_pdf(file):
     text = ""
-    with fitz.open(stream=file.read(), filetype="pdf") as doc:
-        for page in doc:
-            text += page.get_text()
+    with pdfplumber.open(file) as pdf:
+        for page in pdf.pages:
+            text += page.extract_text()  # Extract text from each page
     return text
 
 def analyze_resume_text(text):
